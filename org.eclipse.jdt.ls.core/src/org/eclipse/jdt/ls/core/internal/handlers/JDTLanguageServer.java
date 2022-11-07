@@ -93,11 +93,15 @@ import org.eclipse.lsp4j.CompletionList;
 import org.eclipse.lsp4j.CompletionParams;
 import org.eclipse.lsp4j.DefinitionParams;
 import org.eclipse.lsp4j.DidChangeConfigurationParams;
+import org.eclipse.lsp4j.DidChangeNotebookDocumentParams;
 import org.eclipse.lsp4j.DidChangeTextDocumentParams;
 import org.eclipse.lsp4j.DidChangeWatchedFilesParams;
 import org.eclipse.lsp4j.DidChangeWorkspaceFoldersParams;
+import org.eclipse.lsp4j.DidCloseNotebookDocumentParams;
 import org.eclipse.lsp4j.DidCloseTextDocumentParams;
+import org.eclipse.lsp4j.DidOpenNotebookDocumentParams;
 import org.eclipse.lsp4j.DidOpenTextDocumentParams;
+import org.eclipse.lsp4j.DidSaveNotebookDocumentParams;
 import org.eclipse.lsp4j.DidSaveTextDocumentParams;
 import org.eclipse.lsp4j.DocumentFormattingParams;
 import org.eclipse.lsp4j.DocumentHighlight;
@@ -132,6 +136,7 @@ import org.eclipse.lsp4j.SelectionRange;
 import org.eclipse.lsp4j.SelectionRangeParams;
 import org.eclipse.lsp4j.SemanticTokens;
 import org.eclipse.lsp4j.SemanticTokensParams;
+import org.eclipse.lsp4j.SetTraceParams;
 import org.eclipse.lsp4j.SignatureHelp;
 import org.eclipse.lsp4j.SignatureHelpParams;
 import org.eclipse.lsp4j.SymbolInformation;
@@ -139,6 +144,7 @@ import org.eclipse.lsp4j.TextDocumentIdentifier;
 import org.eclipse.lsp4j.TextEdit;
 import org.eclipse.lsp4j.TypeDefinitionParams;
 import org.eclipse.lsp4j.WillSaveTextDocumentParams;
+import org.eclipse.lsp4j.WorkDoneProgressCancelParams;
 import org.eclipse.lsp4j.WorkspaceEdit;
 import org.eclipse.lsp4j.WorkspaceSymbol;
 import org.eclipse.lsp4j.WorkspaceSymbolParams;
@@ -149,6 +155,7 @@ import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.Either3;
 import org.eclipse.lsp4j.jsonrpc.services.JsonDelegate;
 import org.eclipse.lsp4j.services.LanguageServer;
+import org.eclipse.lsp4j.services.NotebookDocumentService;
 import org.eclipse.lsp4j.services.TextDocumentService;
 import org.eclipse.lsp4j.services.WorkspaceService;
 
@@ -1099,6 +1106,46 @@ public class JDTLanguageServer extends BaseJDTLanguageServer implements Language
 
 	private void waitForLifecycleJobs(IProgressMonitor monitor) {
 		JobHelpers.waitForJobs(DocumentLifeCycleHandler.DOCUMENT_LIFE_CYCLE_JOBS, monitor);
+	}
+
+	@Override
+	public NotebookDocumentService getNotebookDocumentService() {
+		return new NotebookDocumentService() {
+
+			@Override
+			public void didSave(DidSaveNotebookDocumentParams params) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void didOpen(DidOpenNotebookDocumentParams params) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void didClose(DidCloseNotebookDocumentParams params) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void didChange(DidChangeNotebookDocumentParams params) {
+				// TODO Auto-generated method stub
+
+			}
+		};
+	}
+
+	@Override
+	public void cancelProgress(WorkDoneProgressCancelParams params) {
+		// TODO
+	}
+
+	@Override
+	public void setTrace(SetTraceParams params) {
+		// TODO
 	}
 
 }
