@@ -151,7 +151,7 @@ public abstract class BaseInitHandler {
 		}
 
 		Integer processId = param.getProcessId();
-		if (processId != null) {
+		if (processId != null && JavaLanguageServerPlugin.getLanguageServer() != null) {
 			JavaLanguageServerPlugin.getLanguageServer().setParentProcessId(processId.longValue());
 		}
 
