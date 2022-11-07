@@ -28,17 +28,18 @@ import org.eclipse.jdt.ls.core.internal.JDTUtils;
 import org.eclipse.jdt.ls.core.internal.JavaLanguageServerPlugin;
 import org.eclipse.jdt.ls.core.internal.corext.refactoring.RefactoringAvailabilityTester;
 import org.eclipse.jdt.ls.core.internal.corrections.InnovationContext;
+import org.eclipse.lsp4j.PrepareRenameDefaultBehavior;
 import org.eclipse.lsp4j.PrepareRenameResult;
 import org.eclipse.lsp4j.Range;
 import org.eclipse.lsp4j.TextDocumentPositionParams;
 import org.eclipse.lsp4j.jsonrpc.ResponseErrorException;
-import org.eclipse.lsp4j.jsonrpc.messages.Either;
+import org.eclipse.lsp4j.jsonrpc.messages.Either3;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseErrorCode;
 
 public class PrepareRenameHandler {
 
-	public Either<Range, PrepareRenameResult> prepareRename(TextDocumentPositionParams params, IProgressMonitor monitor) {
+	public Either3<Range, PrepareRenameResult, PrepareRenameDefaultBehavior> prepareRename(TextDocumentPositionParams params, IProgressMonitor monitor) {
 
 		final ICompilationUnit unit = JDTUtils.resolveCompilationUnit(params.getTextDocument().getUri());
 		if (unit != null) {
@@ -54,7 +55,7 @@ public class PrepareRenameHandler {
 						if (occurrences != null) {
 							for (OccurrenceLocation loc : occurrences) {
 								if (monitor.isCanceled()) {
-									return Either.forLeft(new Range());
+									return Either3.forFirst(new Range());
 								}
 								if (loc.getOffset() <= offset && loc.getOffset() + loc.getLength() >= offset) {
 									InnovationContext context = new InnovationContext(unit, loc.getOffset(), loc.getLength());
@@ -62,7 +63,7 @@ public class PrepareRenameHandler {
 									ASTNode node = context.getCoveredNode();
 									// Rename package is not fully supported yet.
 									if (!isBinaryOrPackage(node)) {
-										return Either.forLeft(JDTUtils.toRange(unit, loc.getOffset(), loc.getLength()));
+										return Either3.forFirst(JDTUtils.toRange(unit, loc.getOffset(), loc.getLength()));
 									}
 								}
 							}
