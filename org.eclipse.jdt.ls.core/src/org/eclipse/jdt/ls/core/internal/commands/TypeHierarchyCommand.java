@@ -28,8 +28,8 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.core.DefaultWorkingCopyOwner;
 import org.eclipse.jdt.ls.core.internal.JDTUtils;
-import org.eclipse.jdt.ls.core.internal.JSONUtility;
 import org.eclipse.jdt.ls.core.internal.JDTUtils.LocationType;
+import org.eclipse.jdt.ls.core.internal.JSONUtility;
 import org.eclipse.jdt.ls.core.internal.JavaLanguageServerPlugin;
 import org.eclipse.jdt.ls.core.internal.handlers.DocumentSymbolHandler;
 import org.eclipse.lsp4j.Location;
@@ -178,7 +178,7 @@ public class TypeHierarchyCommand {
 		}
 		ITypeHierarchy typeHierarchy = (direction == TypeHierarchyDirection.Parents) ? type.newSupertypeHierarchy(DefaultWorkingCopyOwner.PRIMARY, monitor) : type.newTypeHierarchy(type.getJavaProject(), DefaultWorkingCopyOwner.PRIMARY, monitor);
 		if (direction == TypeHierarchyDirection.Children || direction == TypeHierarchyDirection.Both) {
-			List<TypeHierarchyItem> childrenItems = new ArrayList<TypeHierarchyItem>();
+			List<TypeHierarchyItem> childrenItems = new ArrayList<>();
 			IType[] children = typeHierarchy.getSubtypes(type);
 			for (IType childType : children) {
 				TypeHierarchyItem childItem = TypeHierarchyCommand.toTypeHierarchyItem(childType);
@@ -191,7 +191,7 @@ public class TypeHierarchyCommand {
 			item.setChildren(childrenItems);
 		}
 		if (direction == TypeHierarchyDirection.Parents || direction == TypeHierarchyDirection.Both) {
-			List<TypeHierarchyItem> parentsItems = new ArrayList<TypeHierarchyItem>();
+			List<TypeHierarchyItem> parentsItems = new ArrayList<>();
 			IType[] parents = typeHierarchy.getSupertypes(type);
 			for (IType parentType : parents) {
 				TypeHierarchyItem parentItem = TypeHierarchyCommand.toTypeHierarchyItem(parentType);

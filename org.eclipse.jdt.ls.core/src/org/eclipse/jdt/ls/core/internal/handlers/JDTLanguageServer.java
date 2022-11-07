@@ -117,6 +117,8 @@ import org.eclipse.lsp4j.ImplementationParams;
 import org.eclipse.lsp4j.InitializeParams;
 import org.eclipse.lsp4j.InitializeResult;
 import org.eclipse.lsp4j.InitializedParams;
+import org.eclipse.lsp4j.InlayHint;
+import org.eclipse.lsp4j.InlayHintParams;
 import org.eclipse.lsp4j.Location;
 import org.eclipse.lsp4j.LocationLink;
 import org.eclipse.lsp4j.PrepareRenameDefaultBehavior;
@@ -146,9 +148,6 @@ import org.eclipse.lsp4j.jsonrpc.CompletableFutures;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.Either3;
 import org.eclipse.lsp4j.jsonrpc.services.JsonDelegate;
-import org.eclipse.lsp4j.proposed.InlayHint;
-import org.eclipse.lsp4j.proposed.InlayHintParams;
-import org.eclipse.lsp4j.proposed.InlayHintProvider;
 import org.eclipse.lsp4j.services.LanguageServer;
 import org.eclipse.lsp4j.services.TextDocumentService;
 import org.eclipse.lsp4j.services.WorkspaceService;
@@ -158,7 +157,7 @@ import org.eclipse.lsp4j.services.WorkspaceService;
  *
  */
 public class JDTLanguageServer extends BaseJDTLanguageServer implements LanguageServer, TextDocumentService, WorkspaceService,
-		JavaProtocolExtensions, InlayHintProvider {
+		JavaProtocolExtensions {
 
 	public static final String JAVA_LSP_JOIN_ON_COMPLETION = "java.lsp.joinOnCompletion";
 	public static final String JAVA_LSP_INITIALIZE_WORKSPACE = "java.lsp.initializeWorkspace";

@@ -76,12 +76,6 @@ public class JavaClientConnection {
 		@JsonNotification("language/progressReport")
 		void sendProgressReport(ProgressReport report);
 
-		// TODO : remove this method when LSP4J will provide InlayHint support. See
-		// https://github.com/eclipse/lsp4j/issues/570
-		@JsonRequest("workspace/inlayHint/refresh")
-		default CompletableFuture<Void> refreshInlayHints() {
-			throw new UnsupportedOperationException();
-		}
 	}
 
 	private final LogHandler logHandler;
