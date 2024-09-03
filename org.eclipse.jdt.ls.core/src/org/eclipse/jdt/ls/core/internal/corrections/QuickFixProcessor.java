@@ -283,6 +283,7 @@ public class QuickFixProcessor {
 			case IProblem.IllegalVisibilityModifierForInterfaceMemberType:
 			case IProblem.UnexpectedStaticModifierForMethod:
 			case IProblem.IllegalModifierForInterfaceMethod18:
+			case IProblem.IllegalModifiers:
 				ModifierCorrectionSubProcessor.addRemoveInvalidModifiersProposal(context, problem, proposals, IProposalRelevance.REMOVE_INVALID_MODIFIERS);
 				break;
 			case IProblem.NotVisibleField:
@@ -293,6 +294,7 @@ public class QuickFixProcessor {
 			case IProblem.NotVisibleConstructor:
 			case IProblem.NotVisibleType:
 			case IProblem.JavadocNotVisibleType:
+				System.err.println();
 				ModifierCorrectionSubProcessor.addNonAccessibleReferenceProposal(context, problem, proposals, ModifierCorrectionSubProcessor.TO_VISIBLE, IProposalRelevance.CHANGE_VISIBILITY);
 				break;
 			case IProblem.BodyForAbstractMethod:

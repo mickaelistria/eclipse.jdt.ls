@@ -29,6 +29,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -43,6 +44,7 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.Modifier.ModifierKeyword;
+import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.NameQualifiedType;
 import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.ReturnStatement;
@@ -68,8 +70,6 @@ import org.eclipse.jdt.internal.corext.fix.UnimplementedCodeFixCore;
 import org.eclipse.jdt.internal.corext.fix.UnimplementedCodeFixCore.MakeTypeAbstractOperation;
 import org.eclipse.jdt.internal.corext.util.JavaModelUtil;
 import org.eclipse.jdt.internal.corext.util.JdtFlags;
-import org.eclipse.jdt.ui.text.java.IInvocationContext;
-import org.eclipse.jdt.ui.text.java.IProblemLocation;
 import org.eclipse.jdt.internal.ui.text.correction.IProposalRelevance;
 import org.eclipse.jdt.internal.ui.text.correction.proposals.FixCorrectionProposalCore;
 import org.eclipse.jdt.internal.ui.text.correction.proposals.ModifierChangeCorrectionProposalCore;
@@ -79,6 +79,8 @@ import org.eclipse.jdt.ls.core.internal.corrections.CorrectionMessages;
 import org.eclipse.jdt.ls.core.internal.corrections.ProposalKindWrapper;
 import org.eclipse.jdt.ls.core.internal.corrections.proposals.UnresolvedElementsSubProcessor;
 import org.eclipse.jdt.ls.core.internal.handlers.CodeActionHandler;
+import org.eclipse.jdt.ui.text.java.IInvocationContext;
+import org.eclipse.jdt.ui.text.java.IProblemLocation;
 import org.eclipse.jdt.ui.text.java.correction.ASTRewriteCorrectionProposalCore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -344,17 +346,21 @@ public class ModifierCorrectionSubProcessor {
 	//
 	public static void addRemoveInvalidModifiersProposal(IInvocationContext context, IProblemLocation problem, Collection<ProposalKindWrapper> proposals, int relevance) {
 		ICompilationUnit cu = context.getCompilationUnit();
-
 		ASTNode selectedNode = problem.getCoveringNode(context.getASTRoot());
+		IBinding binding = null;
+		if (selectedNode instanceof Modifier) {
+			selectedNode = selectedNode.getParent();
+		}
 		if (selectedNode instanceof MethodDeclaration methodDeclaration) {
-			selectedNode = methodDeclaration.getName();
+			binding = methodDeclaration.resolveBinding();
+		}
+		if (selectedNode instanceof AbstractTypeDeclaration typeDeclaration) {
+			binding = typeDeclaration.resolveBinding();
+		}
+		if (selectedNode instanceof Name name) {
+			binding = name.resolveBinding();
 		}
 
-		if (!(selectedNode instanceof SimpleName)) {
-			return;
-		}
-
-		IBinding binding = ((SimpleName) selectedNode).resolveBinding();
 		if (binding != null) {
 			String methodName = BasicElementLabels.getJavaElementName(binding.getName());
 			String label = null;
@@ -404,6 +410,11 @@ public class ModifierCorrectionSubProcessor {
 					break;
 				case IProblem.IllegalModifierForLocalClass:
 					excludedModifiers = ~(Modifier.ABSTRACT | Modifier.FINAL | Modifier.STRICTFP);
+					break;
+				case IProblem.IllegalModifiers:
+					if (binding instanceof ITypeBinding typeBinding && typeBinding.isLocal()) {
+						excludedModifiers = ~(Modifier.ABSTRACT | Modifier.FINAL | Modifier.STRICTFP);
+					}
 					break;
 				case IProblem.IllegalModifierForArgument:
 					excludedModifiers = ~Modifier.FINAL;
@@ -981,10 +992,10 @@ public class ModifierCorrectionSubProcessor {
 		if (!(selectedNode instanceof SimpleName)) {
 			return;
 		}
-		if (!(((SimpleName) selectedNode).getParent() instanceof TypeDeclaration)) {
+		if (!(selectedNode.getParent() instanceof TypeDeclaration)) {
 			return;
 		}
-		TypeDeclaration typeDecl = (TypeDeclaration) ((SimpleName) selectedNode).getParent();
+		TypeDeclaration typeDecl = (TypeDeclaration) selectedNode.getParent();
 		boolean isInterface = typeDecl.isInterface();
 
 		ICompilationUnit cu = context.getCompilationUnit();
